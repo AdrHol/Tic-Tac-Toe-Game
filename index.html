@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Tic-Tac Toe</title>
+</head>
+<body>
+    <div class="game-status">
+        <span id="game-result"></span>
+        <button type="button" class="modal-button" id="next-round">Revange?</button><button type="button" class="modal-button" id="end">End Game</button>
+    </div>
+    <div class="modal-background">
+        <div class="modal-display">
+            <div class="modal-content" id="start-modal">
+                <h1>Hello ! Press "Start" to begin.</h1>
+                <button type="button" id="start" class="modal-button" name="start">Start</button>
+            </div>
+            <div class="modal-content" id="gamemode-modal">
+                <h1>Chose game mode.</h1>
+                <button type="button" id="singleplayer" class="modal-button" name="multi">Singleplayer</button>
+                <button type="button" id="multiplayer" class="modal-button" name="mutli">Multiplayer</button>
+            </div>
+            <div class="modal-content player-modal" id="firstPlayer-modal">
+                <h1>Whats Your name 1st player?</h1>
+                <input type="text" class="modal-input" id="player-one" placeholder="What's your name ?" required>
+                <button type="button" id="firstPlayer-button" class="modal-button" name="firstPlayer">Done!</button>
+            </div>
+            <div class="modal-content player-modal" id="secondPlayer-modal">
+                <h1>Whats Your name 2nd player?</h1>
+                <input type="text" class="modal-input" id="player-two" placeholder="What's your name ?" required>
+                <button type="button" id="secondPlayer-button" class="modal-button" name="secondPlayer">Done! Let's start!</button>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard">
+        <div class="player-one-dashboard">
+            <ul class="stat-display">
+                <li class="name-display" id="player-one-name"></li>
+                <li class="score-display" id="player-one-score"></li>
+            </ul>
+        </div>
+        <div class="player-two-dashboard">
+            <ul class="stat-display">
+                <li class="name-display" id="player-two-name"></li>
+                <li class="score-display" id="player-two-score"></li>
+            </ul>
+        </div>
+    </div>
+    <div class="header"><h1> Awasome Tic-Tac-Toe Game</h1></div>
+    <div class="gameboard">
+        <div class="field" id="0,3"></div>
+        <div class="field" id="1,3"></div>
+        <div class="field" id="2,3"></div>
+        <div class="field" id="0,2"></div>
+        <div class="field" id="1,2"></div>
+        <div class="field" id="2,2"></div>
+        <div class="field" id="0,1"></div>
+        <div class="field" id="1,1"></div>
+        <div class="field" id="2,1"></div>
+    </div>
+</body>
+</html>
