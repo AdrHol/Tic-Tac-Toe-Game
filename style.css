@@ -111,7 +111,8 @@ body {
     transform: translateX(-100vw);
 }
 
-.player-modal {
+.player-modal,
+.ai-modal {
     transform: translate(-100vw);
 }
 

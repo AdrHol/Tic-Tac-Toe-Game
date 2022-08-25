@@ -8,6 +8,8 @@ const firstPlayerButton = document.querySelector('#firstPlayer-button');
 const secondPlayerButton = document.querySelector('#secondPlayer-button');
 const dashboard = document.querySelector('.dashboard');
 const modalDisplayContainer = document.querySelector('.modal-background');
+const singlePlayer = document.getElementById('singleplayer');
+const difficultyModal = document.querySelector('#difficulty-modal');
 
 
 startButton.addEventListener('click', function(){
@@ -37,6 +39,24 @@ secondPlayerButton.addEventListener('click', function(){
     dashboard.style.transform = 'translateX(0)';
     modalDisplayContainer.style.display = 'none';
     gameplay();
+})
+
+
+singlePlayer.addEventListener('click', function(){
+    gameModeModal.style.transform = 'translateX(-100vw)';
+    difficultyModal.style.transform = 'translateX(0%)';
+})
+
+
+const begginerModeStart = document.querySelector('#begginer');
+
+begginerModeStart.addEventListener('click', function(){
+    const human = document.querySelector('#human-name');
+    playerOne = playerCreator(human.value, 'O', 'one');
+    difficultyModal.style.transform = 'translateX(-100vw)';
+    dashboard.style.transform = 'translateX(0)';
+    modalDisplayContainer.style.display = 'none';
+    crazyFrogMode();
 })
 
 
@@ -189,6 +209,9 @@ const gameboard = {
 
 
 const gameplay = (function(){
+
+    let gameStatus = 'active';
+
     playerOne.print();
     playerTwo.print();
 
@@ -226,3 +249,57 @@ const gameplay = (function(){
 
     });
  
+
+const crazyFrogMode = (function(){
+
+    let gameStatus = 'active';
+
+    playerTwo = playerCreator('Crazy Frog', 'X', 'two');
+
+        playerOne.print();
+        playerTwo.print();
+    
+        let currentPlayerMove = 'p1' ;
+    
+        function aiDecision() {
+            let cordsY = ['1','2','3'];
+            let cordsX = ['0','1','2'];
+            let x = cordsX[Math.floor(Math.random()*3)];
+            let y = cordsY[Math.floor(Math.random()*3)];
+            let result = `${x},${y}`;
+            
+            if (gameboard[`y${y}`][x] == '') {
+                return result;
+            } else {
+                return aiDecision();
+            }
+        }
+        
+        function playRound() {
+    
+            playerOne.indicator();
+    
+            window.addEventListener('click', function(e){
+                if (e.target.classList.contains('field') && currentPlayerMove === 'p1'){
+                    if (e.target.textContent == ''){
+                        playerOne.playerMove(e.target.id);
+                        currentPlayerMove = 'p2';
+                        playerOne.indicator();
+                        playerTwo.indicator();
+                        setTimeout(()=>{
+                            playerTwo.playerMove(aiDecision());  
+                            currentPlayerMove = 'p1';
+                            playerTwo.indicator();
+                            playerOne.indicator();
+                        }, 2000);
+
+                    }
+    
+                }
+            })
+        }
+    
+        playRound();
+    
+        });
+     
