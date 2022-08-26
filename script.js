@@ -65,6 +65,7 @@ const playerCreator = function (name, mark, player) {
     let score = 0; 
     const nameDOM = document.querySelector(`#player-${player}-name`);
     const scoreDOM = document.querySelector(`#player-${player}-score`);
+
     let printing = function(){ 
         nameDOM.textContent = nickname;
         scoreDOM.textContent = score;
@@ -72,7 +73,7 @@ const playerCreator = function (name, mark, player) {
 
     let win = function(){
         score++;
-
+        gameboard.changeStatus = 'inactive';
         const gameStatus = document.querySelector('.game-status');
         const gameResult = document.querySelector('#game-result');
 
@@ -92,7 +93,9 @@ const playerCreator = function (name, mark, player) {
             gameboard.display();
         })
     };
+
     let draw = function(){
+        gameboard.changeStatus = 'inactive';
         const gameStatus = document.querySelector('.game-status');
         const gameResult = document.querySelector('#game-result');
 
@@ -121,8 +124,6 @@ const playerCreator = function (name, mark, player) {
             nameDOM.setAttribute('class', 'active-player');
             scoreDOM.setAttribute('class', 'active-player');
         }
-
-
     };
 
 
@@ -155,7 +156,17 @@ const gameboard = {
     y1: ['','','',],
     y2: ['','','',],
     y3: ['','','',],
+
+    gameStatus: 'active',
+
+    get showStatus() {
+        return this.gameStatus;
+    },
     
+    set changeStatus(value){
+        this.gameStatus = value;
+    },
+
     reset: function() {
         this.y1[0] = '';
         this.y2[0] = '';
@@ -166,6 +177,7 @@ const gameboard = {
         this.y1[2] = '';
         this.y2[2] = '';
         this.y3[2] = '';
+        this.gameStatus = 'active';
     },
 
     winRecognition: function(){
@@ -210,8 +222,6 @@ const gameboard = {
 
 const gameplay = (function(){
 
-    let gameStatus = 'active';
-
     playerOne.print();
     playerTwo.print();
 
@@ -251,54 +261,54 @@ const gameplay = (function(){
  
 
 const crazyFrogMode = (function(){
-
-    let gameStatus = 'active';
-
     playerTwo = playerCreator('Crazy Frog', 'X', 'two');
-
         playerOne.print();
         playerTwo.print();
-    
-        let currentPlayerMove = 'p1' ;
+    let currentPlayerMove = 'p1';
     
         function aiDecision() {
             let cordsY = ['1','2','3'];
             let cordsX = ['0','1','2'];
-            let x = cordsX[Math.floor(Math.random()*3)];
-            let y = cordsY[Math.floor(Math.random()*3)];
+                let x = cordsX[Math.floor(Math.random()*3)];
+                let y = cordsY[Math.floor(Math.random()*3)];
             let result = `${x},${y}`;
             
-            if (gameboard[`y${y}`][x] == '') {
-                return result;
-            } else {
-                return aiDecision();
-            }
+                if (gameboard[`y${y}`][x] == '') {
+                    return result;
+                } else {
+                    return aiDecision();
+                }
+        }
+
+        function aiMove(){
+            playerTwo.playerMove(aiDecision());  
+                currentPlayerMove = 'p1';
+                    playerTwo.indicator();
+                    playerOne.indicator();
         }
         
         function playRound() {
-    
             playerOne.indicator();
-    
-            window.addEventListener('click', function(e){
-                if (e.target.classList.contains('field') && currentPlayerMove === 'p1'){
-                    if (e.target.textContent == ''){
-                        playerOne.playerMove(e.target.id);
-                        currentPlayerMove = 'p2';
-                        playerOne.indicator();
-                        playerTwo.indicator();
-                        setTimeout(()=>{
-                            playerTwo.playerMove(aiDecision());  
-                            currentPlayerMove = 'p1';
-                            playerTwo.indicator();
-                            playerOne.indicator();
-                        }, 2000);
-
+                const nextRound = document.getElementById('next-round')
+                nextRound.addEventListener('click',function(e){
+                    if(currentPlayerMove === 'p2'){
+                        setTimeout(aiMove, 2000);
                     }
-    
-                }
-            })
+                })    
+                window.addEventListener('click', function(e){
+                    if (e.target.classList.contains('field') && currentPlayerMove === 'p1'){
+                        if (e.target.textContent == ''){
+                            playerOne.playerMove(e.target.id);
+                            currentPlayerMove = 'p2';
+                            playerOne.indicator();
+                            playerTwo.indicator();
+                            if (gameboard.showStatus == 'active'){
+                            setTimeout(aiMove, 2000);
+                        }
+                        }    
+                    }
+                })
         }
-    
         playRound();
     
         });
