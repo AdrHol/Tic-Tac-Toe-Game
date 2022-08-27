@@ -16,21 +16,21 @@ startButton.addEventListener('click', function(){
     const startModal = document.querySelector('#start-modal');
     startModal.style.transform = 'translateX(-100vw)';
     gameModeModal.style.transform = 'translateX(0%)';
-})
+});
 
 const multiplayerButton = document.querySelector('#multiplayer');
 
 multiplayerButton.addEventListener('click', function(){
     gameModeModal.style.transform = 'translateX(-100vw)';
     firstPlayerModal.style.transform = 'translateX(0%)';
-})
+});
 
 firstPlayerButton.addEventListener('click', function(){
     const input = document.querySelector('#player-one')
     playerOne = playerCreator(input.value, 'O', 'one');
     firstPlayerModal.style.transform = 'translateX(-100vw)';
     secondPlayerModal.style.transform = 'translateX(0%)';
-})
+});
 
 secondPlayerButton.addEventListener('click', function(){
     const input = document.querySelector('#player-two')
@@ -39,13 +39,13 @@ secondPlayerButton.addEventListener('click', function(){
     dashboard.style.transform = 'translateX(0)';
     modalDisplayContainer.style.display = 'none';
     gameplay();
-})
+});
 
 
 singlePlayer.addEventListener('click', function(){
     gameModeModal.style.transform = 'translateX(-100vw)';
     difficultyModal.style.transform = 'translateX(0%)';
-})
+});
 
 
 const begginerModeStart = document.querySelector('#begginer');
@@ -57,6 +57,17 @@ begginerModeStart.addEventListener('click', function(){
     dashboard.style.transform = 'translateX(0)';
     modalDisplayContainer.style.display = 'none';
     crazyFrogMode();
+});
+
+const proModeStart = document.querySelector('#pro');
+
+proModeStart.addEventListener('click', function(){
+    const human = document.querySelector('#human-name');
+    playerOne = playerCreator(human.value, 'O', 'one');
+    difficultyModal.style.transform = 'translateX(-100vw)';
+    dashboard.style.transform = 'translateX(0)';
+    modalDisplayContainer.style.display = 'none';
+    skyNetMode();
 })
 
 
@@ -312,4 +323,78 @@ const crazyFrogMode = (function(){
         playRound();
     
         });
-     
+
+
+
+        const skyNetCore = {
+            winnigConfigurations: [
+                ['0,1','1,1','2,1'],['0,2','1,2','2,2'],['0,3','1,3','2,3'],
+                ['0,1','0,2','0,3'],['1,1','1,2','1,3'],['2,1','2,2','2,3'],
+                ['0,1','1,2','2,3'],['0,3','1,2','0,3'],
+            ],
+            decisiveDatabase: '',
+            playerChoice: '',
+
+            set playerMove(move){
+                this.playerChoice = move;
+            },
+
+            dataFiltering: function(){
+
+                if (this.decisiveDatabase == ''){
+                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice))
+                } else {
+                    this.decisiveDatabase = this.decisiveDatabase.filter(element => element.includes(this.playerChoice))
+                }
+            },
+            get aiChoice() {
+                
+            }
+
+        }
+        
+        const skyNetMode = (function(){
+            playerTwo = playerCreator('T-1000', 'X', 'two');
+                playerOne.print();
+                playerTwo.print();
+            let currentPlayerMove = 'p1';
+            
+                function aiDecision() {
+                    
+                }
+        
+                function aiMove(){
+                    playerTwo.playerMove(aiDecision());  
+                        currentPlayerMove = 'p1';
+                            playerTwo.indicator();
+                            playerOne.indicator();
+                }
+                
+                function playRound() {
+                    playerOne.indicator();
+                        // const nextRound = document.getElementById('next-round')
+                        // nextRound.addEventListener('click',function(e){
+                        //     if(currentPlayerMove === 'p2'){
+                        //         setTimeout(aiMove, 2000);
+                        //     }
+                        // })    
+                        window.addEventListener('click', function(e){
+                            if (e.target.classList.contains('field') && currentPlayerMove === 'p1'){
+                                if (e.target.textContent == ''){
+                                    playerOne.playerMove(e.target.id);
+                                    skyNetCore.playerMove = e.target.id;
+                                    currentPlayerMove = 'p2';
+                                    playerOne.indicator();
+                                    playerTwo.indicator();
+                                    if (gameboard.showStatus == 'active'){
+                                    setTimeout(aiMove, 2000);
+                                }
+                                }    
+                            }
+                        })
+                }
+                playRound();
+            
+                });
+                
+             
