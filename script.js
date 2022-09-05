@@ -330,25 +330,71 @@ const crazyFrogMode = (function(){
             winnigConfigurations: [
                 ['0,1','1,1','2,1'],['0,2','1,2','2,2'],['0,3','1,3','2,3'],
                 ['0,1','0,2','0,3'],['1,1','1,2','1,3'],['2,1','2,2','2,3'],
-                ['0,1','1,2','2,3'],['0,3','1,2','0,3'],
+                ['0,1','1,2','2,3'],['0,3','1,2','2,1'],
             ],
             decisiveDatabase: '',
+            preventedWinningConfiguration: [],
             playerChoice: '',
-
+            playerHistory: [],
             set playerMove(move){
-                this.playerChoice = move;
+                if (this.playerChoice !== ''){
+                    this.playerHistory.push(this.playerChoice);
+                    this.playerChoice = move;
+                } else{
+                    this.playerChoice = move;
+                };
+                
             },
 
             dataFiltering: function(){
 
                 if (this.decisiveDatabase == ''){
-                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice))
+                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice));
                 } else {
-                    this.decisiveDatabase = this.decisiveDatabase.filter(element => element.includes(this.playerChoice))
+                    this.decisiveDatabase = this.decisiveDatabase.filter(element => element.includes(this.playerChoice));
                 }
             },
+
+            preventedFilter: function(res){
+                for (let element of this.winnigConfigurations) {
+                    if (element.includes(res)){
+                        this.preventedWinningConfiguration.push(element);
+                    }
+                }
+                this.decisiveDatabase = this.decisiveDatabase.filter(element => !(this.preventedWinningConfiguration.includes(element)))
+            },
+
+        
+            clear: function () {
+                this.decisiveDatabase = '';
+                this.preventedWinningConfiguration = [];
+                this.playerChoice = '';
+                this.playerHistory = [];
+            },
             get aiChoice() {
-                
+                this.dataFiltering();
+                    if (this.decisiveDatabase == ''){
+                        this.dataFiltering();
+                    }
+
+                let result; 
+                    if (gameboard.y2[1] === ''){
+                        result = '1,2';
+                        this.preventedFilter(result);
+
+                    } else {
+                        processedArray = this.decisiveDatabase[0];
+                        check: for (let element of processedArray){
+                                    if (element !== this.playerChoice && !(this.playerHistory.includes(element))) {
+                                        result = element;
+                                        console.log(processedArray);
+                                        this.preventedFilter(result);
+                                        break check;
+                                    }
+                                } 
+                    }
+                        console.log(result);
+                        return result;
             }
 
         }
@@ -359,12 +405,9 @@ const crazyFrogMode = (function(){
                 playerTwo.print();
             let currentPlayerMove = 'p1';
             
-                function aiDecision() {
-                    
-                }
         
                 function aiMove(){
-                    playerTwo.playerMove(aiDecision());  
+                    playerTwo.playerMove(skyNetCore.aiChoice);  
                         currentPlayerMove = 'p1';
                             playerTwo.indicator();
                             playerOne.indicator();
@@ -372,12 +415,13 @@ const crazyFrogMode = (function(){
                 
                 function playRound() {
                     playerOne.indicator();
-                        // const nextRound = document.getElementById('next-round')
-                        // nextRound.addEventListener('click',function(e){
-                        //     if(currentPlayerMove === 'p2'){
-                        //         setTimeout(aiMove, 2000);
-                        //     }
-                        // })    
+                        const nextRound = document.getElementById('next-round')
+                        nextRound.addEventListener('click',function(e){
+                            if(currentPlayerMove === 'p2'){
+                                skyNetCore.clear();
+                                setTimeout(aiMove, 2000);
+                            }
+                        })    
                         window.addEventListener('click', function(e){
                             if (e.target.classList.contains('field') && currentPlayerMove === 'p1'){
                                 if (e.target.textContent == ''){
