@@ -71,37 +71,37 @@ proModeStart.addEventListener('click', function(){
 })
 
 
-const playerCreator = function (name, mark, player) {
+const playerCreator = function (name, mark, player) {                   //player creation factory function
     let nickname = name;
     let score = 0; 
     const nameDOM = document.querySelector(`#player-${player}-name`);
     const scoreDOM = document.querySelector(`#player-${player}-score`);
 
-    let printing = function(){ 
+    let printing = function(){                  // method responsible for displaying result
         nameDOM.textContent = nickname;
         scoreDOM.textContent = score;
     };
 
-    let win = function(){
+    let win = function(){                   // method responsible for assigning points after win
         score++;
         gameboard.changeStatus = 'inactive';
         const gameStatus = document.querySelector('.game-status');
         const gameResult = document.querySelector('#game-result');
 
-        gameStatus.style.display = 'flex';
+        gameStatus.style.display = 'flex';  
         gameResult.textContent = `${nickname} has won this round!`
+        
+        const endGame = document.getElementById('end'); //after winnig, creating request menu for player to decide about next step.
 
-        const endGame = document.getElementById('end');
-
-        endGame.addEventListener('click', function(){
+        endGame.addEventListener('click', function(){       //reloading page on players request 
             window.location.reload();
         })
 
-        const nextRound = document.getElementById('next-round');
-        nextRound.addEventListener('click', function(){
-            gameStatus.style.display = 'none';
-            gameboard.reset();
-            gameboard.display();
+        const nextRound = document.getElementById('next-round'); 
+        nextRound.addEventListener('click', function(){ // if next round is requested 
+            gameStatus.style.display = 'none';          // hiding modal
+            gameboard.reset();                          // reseting gameboard stats
+            gameboard.display();                        // updating gameborad dispaly
         })
     };
 
@@ -336,6 +336,8 @@ const crazyFrogMode = (function(){
             preventedWinningConfiguration: [],
             playerChoice: '',
             playerHistory: [],
+            possibleWinConfigurations: [],
+
             set playerMove(move){
                 if (this.playerChoice !== ''){
                     this.playerHistory.push(this.playerChoice);
@@ -349,7 +351,7 @@ const crazyFrogMode = (function(){
             dataFiltering: function(){
 
                 if (this.decisiveDatabase == ''){
-                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice));
+                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice));  // to fix: when player choice is indirect to combination, computer throws error
                 } else {
                     this.decisiveDatabase = this.decisiveDatabase.filter(element => element.includes(this.playerChoice));
                 }
@@ -364,33 +366,97 @@ const crazyFrogMode = (function(){
                 this.decisiveDatabase = this.decisiveDatabase.filter(element => !(this.preventedWinningConfiguration.includes(element)))
             },
 
-        
+            possibleWinCheck: function(){
+                this.preventedWinningConfiguration.forEach(element => {
+                    searching: for (let [index, value] of element.entries()) {
+                        if (this.playerHistory.includes(value)){
+                            break searching;
+                        } else if (!(this.playerHistory.includes(value)) && index == 2){
+                            this.possibleWinConfigurations = [];
+                            this.possibleWinConfigurations.push(element);
+                        }
+                    }
+                })
+
+            },
+
+            winConfirmation: function(){
+                let combination = this.possibleWinConfigurations[0];
+                let filteredCombination;
+
+                if (combination == undefined){
+                    return false;
+                } else {
+                    filteredCombination = combination.filter(element => gameboard[`y${element[2]}`][element[0]] == 'X')
+                }
+
+                if (filteredCombination.length === 2){
+                    this.decisiveDatabase[0] = combination;
+                }
+
+                },
+            
+            loseRecognition: function(){
+                iteration: for (let element in this.decisiveDatabase){
+                    let combination = this.decisiveDatabase[element];
+                    let filteredCombination;
+                        if (combination == undefined){
+                            return false;
+                        } else {
+                            filteredCombination = combination.filter(element => gameboard[`y${element[2]}`][element[0]] == 'O')
+                        }
+                        if (filteredCombination.length === 2){
+                            this.decisiveDatabase[0] = combination;
+                            break iteration;
+                        } 
+                }
+            },
+            
             clear: function () {
                 this.decisiveDatabase = '';
                 this.preventedWinningConfiguration = [];
                 this.playerChoice = '';
                 this.playerHistory = [];
+                this.possibleWinConfigurations = [];
             },
             get aiChoice() {
                 this.dataFiltering();
                     if (this.decisiveDatabase == ''){
                         this.dataFiltering();
                     }
-
+                
                 let result; 
                     if (gameboard.y2[1] === ''){
                         result = '1,2';
                         this.preventedFilter(result);
 
-                    } else {
+                    } else { 
+                        this.winConfirmation();
                         processedArray = this.decisiveDatabase[0];
                         check: for (let element of processedArray){
-                                    if (element !== this.playerChoice && !(this.playerHistory.includes(element))) {
+                                    if (element !== this.playerChoice && !(this.playerHistory.includes(element)) && gameboard[`y${element[2]}`][element[0]] == '') {
                                         result = element;
                                         console.log(processedArray);
                                         this.preventedFilter(result);
                                         break check;
-                                    }
+                                    } else {
+                                        console.log('cleaning database');
+                                        this.decisiveDatabase = '';
+                                        console.log('data filtering');
+                                        this.dataFiltering();
+                                        console.log('lose recognition');
+                                        this.loseRecognition();
+                                        processedArray = this.decisiveDatabase[0];
+                                        for (let element of processedArray){
+                                            if (element !== this.playerChoice && !(this.playerHistory.includes(element)) && gameboard[`y${element[2]}`][element[0]] == ''){
+                                                result = element;
+                                                console.log(processedArray);
+                                                this.preventedFilter(result);
+                                                break;
+                                            }
+                                        }
+                                        
+                                    };
                                 } 
                     }
                         console.log(result);
@@ -407,7 +473,8 @@ const crazyFrogMode = (function(){
             
         
                 function aiMove(){
-                    playerTwo.playerMove(skyNetCore.aiChoice);  
+                    playerTwo.playerMove(skyNetCore.aiChoice);
+                    skyNetCore.possibleWinCheck();
                         currentPlayerMove = 'p1';
                             playerTwo.indicator();
                             playerOne.indicator();
@@ -417,11 +484,11 @@ const crazyFrogMode = (function(){
                     playerOne.indicator();
                         const nextRound = document.getElementById('next-round')
                         nextRound.addEventListener('click',function(e){
+                            skyNetCore.clear();
                             if(currentPlayerMove === 'p2'){
-                                skyNetCore.clear();
                                 setTimeout(aiMove, 2000);
                             }
-                        })    
+                        }); 
                         window.addEventListener('click', function(e){
                             if (e.target.classList.contains('field') && currentPlayerMove === 'p1'){
                                 if (e.target.textContent == ''){
