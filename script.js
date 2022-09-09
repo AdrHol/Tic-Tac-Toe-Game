@@ -1,88 +1,90 @@
-// modal animation
 
-const startButton = document.querySelector('#start');
-const gameModeModal = document.querySelector('#gamemode-modal');
-const firstPlayerModal = document.querySelector('#firstPlayer-modal');
-const secondPlayerModal = document.querySelector('#secondPlayer-modal');
-const firstPlayerButton = document.querySelector('#firstPlayer-button');
-const secondPlayerButton = document.querySelector('#secondPlayer-button');
-const dashboard = document.querySelector('.dashboard');
-const modalDisplayContainer = document.querySelector('.modal-background');
-const singlePlayer = document.getElementById('singleplayer');
-const difficultyModal = document.querySelector('#difficulty-modal');
-
-
-startButton.addEventListener('click', function(){
-    const startModal = document.querySelector('#start-modal');
-    startModal.style.transform = 'translateX(-100vw)';
-    gameModeModal.style.transform = 'translateX(0%)';
-});
-
-const multiplayerButton = document.querySelector('#multiplayer');
-
-multiplayerButton.addEventListener('click', function(){
-    gameModeModal.style.transform = 'translateX(-100vw)';
-    firstPlayerModal.style.transform = 'translateX(0%)';
-});
-
-firstPlayerButton.addEventListener('click', function(){
-    const input = document.querySelector('#player-one')
-    playerOne = playerCreator(input.value, 'O', 'one');
-    firstPlayerModal.style.transform = 'translateX(-100vw)';
-    secondPlayerModal.style.transform = 'translateX(0%)';
-});
-
-secondPlayerButton.addEventListener('click', function(){
-    const input = document.querySelector('#player-two')
-    playerTwo = playerCreator(input.value, 'X', 'two');
-    secondPlayerModal.style.transform = 'translateX(-100vw)';
-    dashboard.style.transform = 'translateX(0)';
-    modalDisplayContainer.style.display = 'none';
-    gameplay();
-});
+const game = (function(){               //iife containing game interface controls;
+    
+    const startButton = document.querySelector('#start');
+    const gameModeModal = document.querySelector('#gamemode-modal');
+    const firstPlayerModal = document.querySelector('#firstPlayer-modal');
+    const secondPlayerModal = document.querySelector('#secondPlayer-modal');
+    const firstPlayerButton = document.querySelector('#firstPlayer-button');
+    const secondPlayerButton = document.querySelector('#secondPlayer-button');
+    const dashboard = document.querySelector('.dashboard');
+    const modalDisplayContainer = document.querySelector('.modal-background');
+    const singlePlayer = document.getElementById('singleplayer');
+    const difficultyModal = document.querySelector('#difficulty-modal');
 
 
-singlePlayer.addEventListener('click', function(){
-    gameModeModal.style.transform = 'translateX(-100vw)';
-    difficultyModal.style.transform = 'translateX(0%)';
-});
+    startButton.addEventListener('click', function(){
+        const startModal = document.querySelector('#start-modal');
+        startModal.style.transform = 'translateX(-100vw)';
+        gameModeModal.style.transform = 'translateX(0%)';
+    });
+
+    const multiplayerButton = document.querySelector('#multiplayer');
+
+    multiplayerButton.addEventListener('click', function(){
+        gameModeModal.style.transform = 'translateX(-100vw)';
+        firstPlayerModal.style.transform = 'translateX(0%)';
+    });
+
+    firstPlayerButton.addEventListener('click', function(){
+        const input = document.querySelector('#player-one')
+        playerOne = playerCreator(input.value, 'O', 'one');
+        firstPlayerModal.style.transform = 'translateX(-100vw)';
+        secondPlayerModal.style.transform = 'translateX(0%)';
+    });
+
+    secondPlayerButton.addEventListener('click', function(){
+        const input = document.querySelector('#player-two')
+        playerTwo = playerCreator(input.value, 'X', 'two');
+        secondPlayerModal.style.transform = 'translateX(-100vw)';
+        dashboard.style.transform = 'translateX(0)';
+        modalDisplayContainer.style.display = 'none';
+        gameplay();
+    });
 
 
-const begginerModeStart = document.querySelector('#begginer');
-
-begginerModeStart.addEventListener('click', function(){
-    const human = document.querySelector('#human-name');
-    playerOne = playerCreator(human.value, 'O', 'one');
-    difficultyModal.style.transform = 'translateX(-100vw)';
-    dashboard.style.transform = 'translateX(0)';
-    modalDisplayContainer.style.display = 'none';
-    crazyFrogMode();
-});
-
-const proModeStart = document.querySelector('#pro');
-
-proModeStart.addEventListener('click', function(){
-    const human = document.querySelector('#human-name');
-    playerOne = playerCreator(human.value, 'O', 'one');
-    difficultyModal.style.transform = 'translateX(-100vw)';
-    dashboard.style.transform = 'translateX(0)';
-    modalDisplayContainer.style.display = 'none';
-    skyNetMode();
-})
+    singlePlayer.addEventListener('click', function(){
+        gameModeModal.style.transform = 'translateX(-100vw)';
+        difficultyModal.style.transform = 'translateX(0%)';
+    });
 
 
-const playerCreator = function (name, mark, player) {                   //player creation factory function
+    const begginerModeStart = document.querySelector('#begginer');
+
+    begginerModeStart.addEventListener('click', function(){
+        const human = document.querySelector('#human-name');
+        playerOne = playerCreator(human.value, 'O', 'one');
+        difficultyModal.style.transform = 'translateX(-100vw)';
+        dashboard.style.transform = 'translateX(0)';
+        modalDisplayContainer.style.display = 'none';
+        crazyFrogMode();
+    });
+
+    const proModeStart = document.querySelector('#pro');
+
+    proModeStart.addEventListener('click', function(){
+        const human = document.querySelector('#human-name');
+        playerOne = playerCreator(human.value, 'O', 'one');
+        difficultyModal.style.transform = 'translateX(-100vw)';
+        dashboard.style.transform = 'translateX(0)';
+        modalDisplayContainer.style.display = 'none';
+        skyNetMode();
+    })
+    })();
+
+
+const playerCreator = function (name, mark, player) {                       //player creation factory function
     let nickname = name;
     let score = 0; 
     const nameDOM = document.querySelector(`#player-${player}-name`);
     const scoreDOM = document.querySelector(`#player-${player}-score`);
 
-    let printing = function(){                  // method responsible for displaying result
+    let printing = function(){                                              // method responsible for displaying result
         nameDOM.textContent = nickname;
         scoreDOM.textContent = score;
     };
 
-    let win = function(){                   // method responsible for assigning points after win
+    let win = function(){                                                   // method responsible for assigning points after win
         score++;
         gameboard.changeStatus = 'inactive';
         const gameStatus = document.querySelector('.game-status');
@@ -91,9 +93,9 @@ const playerCreator = function (name, mark, player) {                   //player
         gameStatus.style.display = 'flex';  
         gameResult.textContent = `${nickname} has won this round!`
         
-        const endGame = document.getElementById('end'); //after winnig, creating request menu for player to decide about next step.
+        const endGame = document.getElementById('end');                     //after win, creating request menu for player to decide about next step.
 
-        endGame.addEventListener('click', function(){       //reloading page on players request 
+        endGame.addEventListener('click', function(){                       //reloading page on players request 
             window.location.reload();
         })
 
@@ -105,29 +107,29 @@ const playerCreator = function (name, mark, player) {                   //player
         })
     };
 
-    let draw = function(){
-        gameboard.changeStatus = 'inactive';
+    let draw = function(){                              //draw assigning method
+        gameboard.changeStatus = 'inactive';                    
         const gameStatus = document.querySelector('.game-status');
         const gameResult = document.querySelector('#game-result');
 
-        gameStatus.style.display = 'flex';
+        gameStatus.style.display = 'flex';              //modal manipulation
         gameResult.textContent = `It's a draw !`
 
-        const endGame = document.getElementById('end');
+        const endGame = document.getElementById('end'); 
 
-        endGame.addEventListener('click', function(){
+        endGame.addEventListener('click', function(){   //restarting page on request
             window.location.reload();
         })
 
-        const nextRound = document.getElementById('next-round');
+        const nextRound = document.getElementById('next-round');    //engaging next round on request
         nextRound.addEventListener('click', function(){
-            gameStatus.style.display = 'none';
-            gameboard.reset();
-            gameboard.display();
+            gameStatus.style.display = 'none';                      //hiding modal
+            gameboard.reset();                                      // reseting gameboard
+            gameboard.display();                                    // displaying gameboard
         })
     };
 
-    let turnIndicator = function(){
+    let turnIndicator = function(){                             //turn manipulation
         if (nameDOM.classList.contains('active-player')){
             nameDOM.removeAttribute('class');
             scoreDOM.removeAttribute('class');
@@ -138,11 +140,11 @@ const playerCreator = function (name, mark, player) {                   //player
     };
 
 
-    let playerMove = function(cords) {
-        let y = `y${cords[2]}`;
-                gameboard[`${y}`][Number(cords[0])] = this.mark;
+    let playerMove = function(cords) {                                  //player move mechanics
+        let y = `y${cords[2]}`;                                         
+                gameboard[`${y}`][Number(cords[0])] = this.mark;        
                 gameboard.display();
-                gameboard.winRecognition();
+                gameboard.winRecognition();                             // method which recognites if winning condition is achieved
                 if (gameboard.winRecognition() === 'win') {
                     win()
                     printing();
@@ -163,8 +165,8 @@ const playerCreator = function (name, mark, player) {                   //player
 let playerOne;
 let playerTwo;
 
-const gameboard = {
-    y1: ['','','',],
+const gameboard = {                                 // gamebord object
+    y1: ['','','',],                                //memory values of gameboard fields
     y2: ['','','',],
     y3: ['','','',],
 
@@ -178,7 +180,7 @@ const gameboard = {
         this.gameStatus = value;
     },
 
-    reset: function() {
+    reset: function() {                             //clearing gameboard memory
         this.y1[0] = '';
         this.y2[0] = '';
         this.y3[0] = '';
@@ -191,7 +193,25 @@ const gameboard = {
         this.gameStatus = 'active';
     },
 
-    winRecognition: function(){
+    get empty(){                                                //getter for remaining empty fields on gameboard
+        const test = (element) => element == '';
+
+        if (this.y1.includes('')){
+            let result;
+            result = `${this.y1.findIndex(test)},1`;
+            return result;
+        } else if (this.y2.includes('')){
+            let result;
+            result = `${this.y2.findIndex(test)},2`;
+            return result; 
+        } else if (this.y3.includes('')){
+            let result;
+            result = `${this.y3.findIndex(test)},3`;
+            return result;
+        }
+    },
+
+    winRecognition: function(){             //winning pattern recognition
         let winStatus = false;
         
         if ((this.y1[0] != '' && this.y1[0] == this.y1[1] && this.y1[0] == this.y1[2]) || (this.y2[0] != '' && this.y2[0] == this.y2[1] && this.y2[0] == this.y2[2]) || (this.y3[0] != '' && this.y3[0] == this.y3[1] && this.y3[0] == this.y3[2])){
@@ -213,7 +233,7 @@ const gameboard = {
         
     },
     
-    display: function() {
+    display: function() {                                           // displaying memory value of each field on gameboard
         this.y1.forEach(function(value, index) {
            const field = document.getElementById(`${index},1`);
             field.textContent = value;
@@ -231,7 +251,7 @@ const gameboard = {
 }
 
 
-const gameplay = (function(){
+const gameplay = (function(){               // gameplay object - multiplayer mode
 
     playerOne.print();
     playerTwo.print();
@@ -271,13 +291,13 @@ const gameplay = (function(){
     });
  
 
-const crazyFrogMode = (function(){
+const crazyFrogMode = (function(){                              // gameplay object - easy AI mode
     playerTwo = playerCreator('Crazy Frog', 'X', 'two');
         playerOne.print();
         playerTwo.print();
     let currentPlayerMove = 'p1';
     
-        function aiDecision() {
+        function aiDecision() {                                 // AI decision making process
             let cordsY = ['1','2','3'];
             let cordsX = ['0','1','2'];
                 let x = cordsX[Math.floor(Math.random()*3)];
@@ -291,7 +311,7 @@ const crazyFrogMode = (function(){
                 }
         }
 
-        function aiMove(){
+        function aiMove(){                                      // calling AI decision
             playerTwo.playerMove(aiDecision());  
                 currentPlayerMove = 'p1';
                     playerTwo.indicator();
@@ -326,19 +346,19 @@ const crazyFrogMode = (function(){
 
 
 
-        const skyNetCore = {
+        const skyNetCore = {                        // hard AI decision making core
             winnigConfigurations: [
                 ['0,1','1,1','2,1'],['0,2','1,2','2,2'],['0,3','1,3','2,3'],
                 ['0,1','0,2','0,3'],['1,1','1,2','1,3'],['2,1','2,2','2,3'],
                 ['0,1','1,2','2,3'],['0,3','1,2','2,1'],
             ],
-            decisiveDatabase: '',
-            preventedWinningConfiguration: [],
-            playerChoice: '',
-            playerHistory: [],
-            possibleWinConfigurations: [],
+            decisiveDatabase: '',                   // database of configuration to consider during making move
+            preventedWinningConfiguration: [],      // database of configutrations which are no longer threat
+            playerChoice: '',                       // latest player choice
+            playerHistory: [],                      // history of player choices
+            possibleWinConfigurations: [],          // configurations which can lead to win 
 
-            set playerMove(move){
+            set playerMove(move){                       
                 if (this.playerChoice !== ''){
                     this.playerHistory.push(this.playerChoice);
                     this.playerChoice = move;
@@ -348,16 +368,16 @@ const crazyFrogMode = (function(){
                 
             },
 
-            dataFiltering: function(){
+            dataFiltering: function(){                  // filtering every winning configuration for searching most possible choices
 
                 if (this.decisiveDatabase == ''){
-                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice));  // to fix: when player choice is indirect to combination, computer throws error
+                    this.decisiveDatabase = this.winnigConfigurations.filter(element => element.includes(this.playerChoice)); 
                 } else {
                     this.decisiveDatabase = this.decisiveDatabase.filter(element => element.includes(this.playerChoice));
                 }
             },
 
-            preventedFilter: function(res){
+            preventedFilter: function(res){             // filtering database for outcluding prevented threats
                 for (let element of this.winnigConfigurations) {
                     if (element.includes(res)){
                         this.preventedWinningConfiguration.push(element);
@@ -366,7 +386,7 @@ const crazyFrogMode = (function(){
                 this.decisiveDatabase = this.decisiveDatabase.filter(element => !(this.preventedWinningConfiguration.includes(element)))
             },
 
-            possibleWinCheck: function(){
+            possibleWinCheck: function(){               // searching for possibly winning configurations
                 this.preventedWinningConfiguration.forEach(element => {
                     searching: for (let [index, value] of element.entries()) {
                         if (this.playerHistory.includes(value)){
@@ -380,7 +400,7 @@ const crazyFrogMode = (function(){
 
             },
 
-            winConfirmation: function(){
+            winConfirmation: function(){               //testing possible win configurattions
                 let combination = this.possibleWinConfigurations[0];
                 let filteredCombination;
 
@@ -396,7 +416,7 @@ const crazyFrogMode = (function(){
 
                 },
             
-            loseRecognition: function(){
+            loseRecognition: function(){            // searching for major threats
                 iteration: for (let element in this.decisiveDatabase){
                     let combination = this.decisiveDatabase[element];
                     let filteredCombination;
@@ -412,60 +432,62 @@ const crazyFrogMode = (function(){
                 }
             },
             
-            clear: function () {
+            clear: function () {                        //clearing data
                 this.decisiveDatabase = '';
                 this.preventedWinningConfiguration = [];
                 this.playerChoice = '';
                 this.playerHistory = [];
                 this.possibleWinConfigurations = [];
             },
-            get aiChoice() {
+            get aiChoice() {                            // AI deiciosn making process
                 this.dataFiltering();
                     if (this.decisiveDatabase == ''){
                         this.dataFiltering();
                     }
                 
-                let result; 
+                let result;                             // if player made move and center of board is empty - consider this field as priority
                     if (gameboard.y2[1] === ''){
                         result = '1,2';
                         this.preventedFilter(result);
 
-                    } else { 
-                        this.winConfirmation();
+                    } else {                            
+                        this.winConfirmation();                         //check possible win configurations
                         processedArray = this.decisiveDatabase[0];
                         check: for (let element of processedArray){
                                     if (element !== this.playerChoice && !(this.playerHistory.includes(element)) && gameboard[`y${element[2]}`][element[0]] == '') {
                                         result = element;
-                                        console.log(processedArray);
                                         this.preventedFilter(result);
                                         break check;
                                     } else {
-                                        console.log('cleaning database');
                                         this.decisiveDatabase = '';
-                                        console.log('data filtering');
                                         this.dataFiltering();
-                                        console.log('lose recognition');
                                         this.loseRecognition();
-                                        processedArray = this.decisiveDatabase[0];
-                                        for (let element of processedArray){
-                                            if (element !== this.playerChoice && !(this.playerHistory.includes(element)) && gameboard[`y${element[2]}`][element[0]] == ''){
-                                                result = element;
-                                                console.log(processedArray);
-                                                this.preventedFilter(result);
-                                                break;
+
+                                        let decisiveData = this.decisiveDatabase;
+                                        let databaseLength = decisiveData.length;
+                                        
+                                        iteration: for (let i = 0; i < databaseLength; i++){
+                                            for (let element of decisiveData[i]){
+                                                if (element !== this.playerChoice && !(this.playerHistory.includes(element)) && gameboard[`y${element[2]}`][element[0]] == ''){
+                                                    result = element;
+                                                    this.preventedFilter(result);
+                                                    break iteration;
+                                                }
                                             }
                                         }
-                                        
-                                    };
+
+                                        if (result === undefined){
+                                            result = gameboard.empty;
+                                        }
+                                    }
                                 } 
                     }
-                        console.log(result);
                         return result;
             }
 
         }
         
-        const skyNetMode = (function(){
+        const skyNetMode = (function(){         //gameplay object - AI hard mode
             playerTwo = playerCreator('T-1000', 'X', 'two');
                 playerOne.print();
                 playerTwo.print();
