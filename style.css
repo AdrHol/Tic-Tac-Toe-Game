@@ -66,9 +66,9 @@ body {
 
 .modal-display{
     position: relative;
-    width: 40%;
+    width: max(40%, 450px);
     height: 40%;
-    margin: 15% auto;
+    margin: max(15%, 200px) auto;
 
 }
 
@@ -191,4 +191,52 @@ ul {
     color: var(--first-light-color);
     text-align: center;
     font-size: 3rem;
+}
+
+@media (max-width: 500px){
+
+    .header{
+        border-radius: 0;
+        width: 100vw;
+
+    }
+    h1,
+    span#game-result {
+        font-size: 7vw;
+    }
+
+    .modal-display{
+        width: max(80vw, 200px);
+    }
+
+    .modal-input{
+        width: 70%;
+    }
+    .gameboard{
+        grid-template-columns: repeat(3, 25vw);
+        grid-template-rows: repeat(3, 25vw);
+    }
+    .field {
+        height:25vw;
+        width: 25vw;
+    }
+    .dashboard{
+        width: 100vw;
+    }
+    .active-player {
+        font-size: 7vw
+    }
+    .name-display,
+    .score-display {
+        font-size: 7vw;
+    }
+    .game-status{
+        width: max(80vw, 200px);
+        top: auto;
+        left: auto;
+        border-radius: 2rem;
+    }
+    .modal-button {
+        font-size: 8vw;
+    }
 }
